@@ -18,6 +18,7 @@
   --color-accent: var(--accent);
   --color-destructive: var(--destructive);
   --color-good: var(--good);
+  --color-warning: var(--warning);
   --color-border: var(--border);
   --color-notice: var(--notice);
 }
@@ -35,6 +36,7 @@
   --accent: oklch(0.92 0.05 70);
   --destructive: oklch(0.56 0.21 27);
   --good: oklch(0.5 0.12 150);
+  --warning: oklch(0.58 0.13 80);
   --border: oklch(0.9 0.02 70);
   --notice: oklch(0.95 0.05 85);
 }

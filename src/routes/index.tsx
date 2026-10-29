@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   analyze, loadData, saveData, sampleData, isValidData, newId, unitCost, salesBase, menuCost,
-  won, pct, num, TAX_LABEL, getDelivery, deliveryCompare, type Delivery,
+  won, pct, num, TAX_LABEL, getDelivery, deliveryCompare, rateBadgeTone,
+  type Delivery,
   type AppData, type Ingredient, type Menu, type Unit, type TaxType,
 } from "@/lib/calc";
 
@@ -92,10 +93,24 @@ function Btn({ children, onClick, variant = "primary", className = "" }: { child
   const v = variant === "primary" ? "bg-primary text-primary-foreground" : variant === "danger" ? "border border-destructive text-destructive" : "bg-secondary text-foreground";
   return <button onClick={onClick} className={`min-h-11 rounded-xl px-4 font-semibold ${v} ${className}`}>{children}</button>;
 }
-function Stat({ label, value, tone }: { label: string; value: string; tone?: "bad" | "good" | undefined }) {
+type BadgeTone = { text: string; cls: string };
+const BADGE = {
+  good: { text: "좋음", cls: "bg-good/15 text-good" },
+  warn: { text: "주의", cls: "bg-warning/20 text-warning" },
+  bad: { text: "점검 필요", cls: "bg-destructive/15 text-destructive" },
+} as const;
+const rateBadge = (rate: number, targetRate: number): BadgeTone =>
+  BADGE[rateBadgeTone(rate, targetRate)];
+function Badge({ tone }: { tone: BadgeTone }) {
+  return <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-bold ${tone.cls}`}>{tone.text}</span>;
+}
+function Stat({ label, value, tone, badge }: { label: string; value: string; tone?: "bad" | "good" | undefined; badge?: BadgeTone | undefined }) {
   return (
     <div className="rounded-xl bg-muted p-3">
-      <div className="text-xs text-muted-foreground">{label}</div>
+      <div className="flex items-center justify-between gap-1">
+        <span className="text-xs text-muted-foreground">{label}</span>
+        {badge && <Badge tone={badge} />}
+      </div>
       <div className={`mt-0.5 text-xl font-bold tabular-nums ${tone === "bad" ? "text-destructive" : tone === "good" ? "text-good" : ""}`}>{value}</div>
     </div>
   );
@@ -228,7 +243,7 @@ function MenuResult({ m, data }: { m: Menu; data: AppData }) {
       <div className="mb-2 text-sm font-semibold">{m.name} 결과</div>
       <div className="grid grid-cols-2 gap-2">
         <Stat label="재료비" value={won(r.cost)} />
-        <Stat label="원가율" value={pct(r.rate)} tone={r.rate > s.targetRate ? "bad" : "good"} />
+        <Stat label="원가율" value={pct(r.rate)} tone={r.rate > s.targetRate + 10 ? "bad" : r.rate > s.targetRate ? undefined : "good"} badge={rateBadge(r.rate, s.targetRate)} />
         <Stat label="한 개 팔면 남는 돈" value={won(r.profit)} tone={r.profit <= 0 ? "bad" : undefined} />
         <Stat label={`권장 판매가 (목표 ${s.targetRate}%)`} value={won(r.rec)} />
       </div>
