@@ -99,11 +99,8 @@ const BADGE = {
   warn: { text: "주의", cls: "bg-warning/20 text-warning" },
   bad: { text: "점검 필요", cls: "bg-destructive/15 text-destructive" },
 } as const;
-function rateBadge(rate: number, targetRate: number): BadgeTone {
-  if (rate <= targetRate) return BADGE.good;
-  if (rate <= targetRate + 10) return BADGE.warn;
-  return BADGE.bad;
-}
+const rateBadge = (rate: number, targetRate: number): BadgeTone =>
+  BADGE[rateBadgeTone(rate, targetRate)];
 function Badge({ tone }: { tone: BadgeTone }) {
   return <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-bold ${tone.cls}`}>{tone.text}</span>;
 }
