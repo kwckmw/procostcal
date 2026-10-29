@@ -3,7 +3,7 @@ export type TaxType = "general" | "simple" | "exempt";
 export interface Ingredient { id: string; name: string; price: number; amount: number; unit: Unit; loss: number }
 export interface MenuRow { ingredientId: string; qty: number }
 export interface Menu { id: string; name: string; price: number; rows: MenuRow[] }
-export interface Settings { shopName: string; taxType: TaxType; targetRate: number; dailySales: number; monthDays: number }
+export interface Settings { shopName: string; taxType: TaxType; targetRate: number; dailySales: number; monthDays: number; delivery?: Partial<Delivery> }
 export interface AppData { ingredients: Ingredient[]; menus: Menu[]; settings: Settings }
 
 export const STORAGE_KEY = "cost-calc-v1";
@@ -101,3 +101,17 @@ export const won = (v: number) => `${Math.round(n(v)).toLocaleString("ko-KR")}ì›
 export const pct = (v: number) => `${n(v).toFixed(1)}%`;
 export const num = (v: number, digits = 2) =>
   n(v).toLocaleString("ko-KR", { maximumFractionDigits: digits });
+
+export interface Delivery { avgOrder: number; costRate: number; appFee: number; payFee: number; deliveryFee: number; packFee: number; cardFee: number }
+export const DELIVERY_DEFAULT: Delivery = { avgOrder: 25000, costRate: 30, appFee: 6.8, payFee: 1.4, deliveryFee: 2900, packFee: 0, cardFee: 0.4 };
+export function getDelivery(s: Settings): Delivery {
+  return { ...DELIVERY_DEFAULT, ...(s.delivery || {}) };
+}
+export function deliveryCompare(s: Settings) {
+  const d = getDelivery(s);
+  const base = salesBase(d.avgOrder, s.taxType);
+  const cost = base * (d.costRate / 100);
+  const delivery = base - cost - d.avgOrder * ((d.appFee + d.payFee) / 100) - d.deliveryFee - d.packFee;
+  const store = base - cost - d.avgOrder * (d.cardFee / 100);
+  return { base, cost, delivery, store, diff: store - delivery };
+}
