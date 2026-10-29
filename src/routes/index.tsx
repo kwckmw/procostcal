@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   analyze, loadData, saveData, sampleData, isValidData, newId, unitCost, salesBase, menuCost,
-  won, pct, num, TAX_LABEL, getDelivery, deliveryCompare, type Delivery,
+  won, pct, num, TAX_LABEL, getDelivery, deliveryCompare, rateBadgeTone,
+  type Delivery,
   type AppData, type Ingredient, type Menu, type Unit, type TaxType,
 } from "@/lib/calc";
 

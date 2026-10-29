@@ -102,6 +102,14 @@ export const pct = (v: number) => `${n(v).toFixed(1)}%`;
 export const num = (v: number, digits = 2) =>
   n(v).toLocaleString("ko-KR", { maximumFractionDigits: digits });
 
+export type RateBadgeTone = "good" | "warn" | "bad";
+/** 원가율 배지: 목표 이하 '좋음', 목표+10%p 이내 '주의', 그보다 높으면 '점검 필요'. */
+export function rateBadgeTone(rate: number, targetRate: number): RateBadgeTone {
+  if (rate <= targetRate) return "good";
+  if (rate <= targetRate + 10) return "warn";
+  return "bad";
+}
+
 export interface Delivery { avgOrder: number; costRate: number; appFee: number; payFee: number; deliveryFee: number; packFee: number; cardFee: number }
 export const DELIVERY_DEFAULT: Delivery = { avgOrder: 25000, costRate: 30, appFee: 6.8, payFee: 1.4, deliveryFee: 2900, packFee: 0, cardFee: 0.4 };
 export function getDelivery(s: Settings): Delivery {
