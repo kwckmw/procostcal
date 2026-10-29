@@ -152,12 +152,33 @@ function IngredientsTab({ data, setData }: { data: AppData; setData: SetData }) 
 }
 
 /* ---------- 메뉴 ---------- */
+function DeliveryCard({ data }: { data: AppData }) {
+  const d = getDelivery(data.settings);
+  const r = deliveryCompare(data.settings);
+  return (
+    <Card className="space-y-3">
+      <h2 className="text-lg font-bold">배달 주문 한 건</h2>
+      <p className="text-sm text-muted-foreground">평균 주문 {won(d.avgOrder)} 기준 · 주문 재료비 {won(r.cost)}</p>
+      <div className="grid grid-cols-2 gap-3">
+        <Stat label="배달로 팔 때 남는 돈" value={won(r.delivery)} tone={r.delivery < 0 ? "bad" : undefined} />
+        <Stat label="매장에서 카드로 팔 때" value={won(r.store)} tone={r.store < 0 ? "bad" : undefined} />
+      </div>
+      <p className="rounded-xl bg-accent/50 p-3 text-sm font-medium">
+        {Math.round(r.diff) >= 0
+          ? `배달 한 건마다 매장보다 ${won(r.diff)} 덜 남아요`
+          : `배달 한 건마다 매장보다 ${won(-r.diff)} 더 남아요`}
+      </p>
+    </Card>
+  );
+}
+
 function MenusTab({ data, setData }: { data: AppData; setData: SetData }) {
   const update = (id: string, f: (m: Menu) => Menu) => setData((d) => ({ ...d, menus: d.menus.map((m) => (m.id === id ? f(m) : m)) }));
   const add = () => setData((d) => ({ ...d, menus: [...d.menus, { id: newId(), name: "새 메뉴", price: 0, rows: [] }] }));
   const remove = (id: string) => { if (confirm("이 메뉴를 삭제할까요?")) setData((d) => ({ ...d, menus: d.menus.filter((m) => m.id !== id) })); };
   return (
     <>
+      <DeliveryCard data={data} />
       <h2 className="text-lg font-bold">메뉴 {data.menus.length}개</h2>
       {data.menus.map((m) => (
         <div key={m.id} className="space-y-2">
@@ -355,6 +376,24 @@ function SettingsTab({ data, setData }: { data: AppData; setData: SetData }) {
         <div className="grid grid-cols-2 gap-3">
           <label className="block"><Label>하루 판매량</Label><NumInput value={s.dailySales} suffix="개" onChange={(v) => set({ dailySales: v })} /></label>
           <label className="block"><Label>월 영업일</Label><NumInput value={s.monthDays} suffix="일" onChange={(v) => set({ monthDays: v })} /></label>
+        </div>
+      </Card>
+      <Card className="space-y-3">
+        <h2 className="text-lg font-bold">배달 주문 설정</h2>
+        <div className="grid grid-cols-2 gap-3">
+          {([
+            ["avgOrder", "배달 평균 주문 금액", "원"],
+            ["costRate", "배달 주문 원가율", "%"],
+            ["appFee", "배달앱 중개수수료", "%"],
+            ["payFee", "결제수수료", "%"],
+            ["deliveryFee", "사장님 부담 배달비", "원"],
+            ["packFee", "포장비", "원"],
+            ["cardFee", "카드 수수료", "%"],
+          ] as [keyof Delivery, string, string][]).map(([k, label, suf]) => (
+            <label key={k} className="block min-w-0"><Label>{label}</Label>
+              <NumInput value={getDelivery(s)[k]} suffix={suf} onChange={(v) => set({ delivery: { ...getDelivery(s), [k]: v } })} />
+            </label>
+          ))}
         </div>
       </Card>
       <Card className="space-y-3">
