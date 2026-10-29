@@ -1,0 +1,65 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@theme inline {
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --font-sans: "Pretendard Variable", Pretendard, system-ui, sans-serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-destructive: var(--destructive);
+  --color-good: var(--good);
+  --color-border: var(--border);
+  --color-notice: var(--notice);
+}
+
+:root {
+  --radius: 0.875rem;
+  --background: oklch(0.975 0.012 75);
+  --foreground: oklch(0.27 0.03 50);
+  --card: oklch(1 0 0);
+  --primary: oklch(0.58 0.14 45);
+  --primary-foreground: oklch(0.99 0.01 75);
+  --secondary: oklch(0.94 0.025 70);
+  --muted: oklch(0.95 0.015 70);
+  --muted-foreground: oklch(0.52 0.025 55);
+  --accent: oklch(0.92 0.05 70);
+  --destructive: oklch(0.56 0.21 27);
+  --good: oklch(0.5 0.12 150);
+  --border: oklch(0.9 0.02 70);
+  --notice: oklch(0.95 0.05 85);
+}
+
+@layer base {
+  * { border-color: var(--color-border); }
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    overflow-x: hidden;
+  }
+  input[type="range"] { accent-color: var(--primary); }
+  input[type="radio"] { accent-color: var(--primary); }
+}
+
+@utility field {
+  width: 100%;
+  min-height: 48px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--card);
+  padding: 0 0.875rem;
+  font-size: 1.0625rem;
+  &:focus { outline: 2px solid var(--primary); outline-offset: 1px; }
+}
