@@ -38,7 +38,7 @@ function App() {
   return (
     <div className="mx-auto min-h-screen max-w-xl pb-28">
       <header className="sticky top-0 z-10 border-b bg-background/95 px-4 pb-3 pt-4 backdrop-blur">
-        <h1 className="text-xl font-bold">{data.settings.shopName || "우리 가게"} 원가 계산기</h1>
+        <h1 className="text-xl font-bold">Kang's 원가 계산기</h1>
         <div className="mt-2 rounded-lg bg-notice px-3 py-2 text-sm leading-snug">
           모든 기본값과 수수료는 예시입니다. 우리 가게 값과 내 계약 조건으로 바꾸세요.
           <span className="mt-0.5 block text-xs text-muted-foreground">이 기기 브라우저에 자동 저장됨</span>
